@@ -133,7 +133,7 @@ export default function Home() {
             <a href="https://haque-and-sons.vercel.app/services.html" className="hover:text-indigo-600 transition">Services</a>
             <a href="https://haque-and-sons.vercel.app/blog.html" className="hover:text-indigo-600 transition">Blog</a>
             <a href="https://resume-builder-alpha-puce.vercel.app/" className="hover:text-indigo-600 transition">AI Resume Builder</a>
-            <a href="https://nejamulportfolio.vercel.app/" className="hover:text-indigo-600 transition">Admin Portfolio</a>
+            <a href="https://portfolio-ai-theta.vercel.app/" className="hover:text-indigo-600 transition">Admin Portfolio</a>
           </nav>
         </div>
       </header>
