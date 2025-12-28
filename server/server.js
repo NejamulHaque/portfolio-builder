@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ Connect to MySQL
+
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -23,19 +23,29 @@ db.connect(err => {
   }
 });
 
-// ✅ Save Portfolio (POST)
 app.post('/api/portfolio/save', (req, res) => {
-  const { username, name, bio, github, linkedin, projects } = req.body;
-
+  const {
+    username,
+    name,
+    bio,
+    github,
+    linkedin,
+    instagram,
+    x,
+    projects,
+    skills
+  } = req.body;
+  
   const query = `
-    INSERT INTO portfolios (username, name, bio, github, linkedin, projects)
-    VALUES (?, ?, ?, ?, ?, ?)
-    ON DUPLICATE KEY UPDATE name=?, bio=?, github=?, linkedin=?, projects=?
+    INSERT INTO portfolios (username, name, bio, github, linkedin, instagram, x, projects, skills)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON DUPLICATE KEY UPDATE
+      name = ?, bio = ?, github = ?, linkedin = ?, instagram = ?, x = ?, projects = ?, skills = ?
   `;
-
+  
   const values = [
-    username, name, bio, github, linkedin, projects,
-    name, bio, github, linkedin, projects
+    username, name, bio, github, linkedin, instagram, x, projects, skills,
+    name, bio, github, linkedin, instagram, x, projects, skills
   ];
 
   db.query(query, values, (err, result) => {
@@ -47,7 +57,6 @@ app.post('/api/portfolio/save', (req, res) => {
   });
 });
 
-// ✅ Fetch Portfolio by Username (GET)
 app.get('/api/portfolio/:username', (req, res) => {
   const { username } = req.params;
   const query = 'SELECT * FROM portfolios WHERE username = ?';
@@ -66,6 +75,5 @@ app.get('/api/portfolio/:username', (req, res) => {
   });
 });
 
-// ✅ Start the server
 const PORT = process.env.PORT || 5003;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
