@@ -4,18 +4,40 @@ import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export default function Home() {
-  const [formData, setFormData] = useState({
-    username: '',
-    name: '',
-    bio: '',
-    github: '',
-    linkedin: '',
-    projects: [{ title: '', description: '' }],
-    skills: [],
-    skillInput: ''
-  });
+const savedData = JSON.parse(localStorage.getItem('portfolioData') || '{}');
 
+const initialData = {
+  username: '',
+  name: '',
+  bio: '',
+  github: '',
+  linkedin: '',
+  instagram: '',
+  x: '',
+  skillInput: '',
+  ...savedData,
+  projects: Array.isArray(savedData.projects)
+    ? savedData.projects
+    : (() => {
+        try {
+          return JSON.parse(savedData.projects || '[]');
+        } catch {
+          return [{ title: '', description: '' }];
+        }
+      })(),
+  skills: Array.isArray(savedData.skills)
+    ? savedData.skills
+    : (() => {
+        try {
+          return JSON.parse(savedData.skills || '[]');
+        } catch {
+          return [];
+        }
+      })()
+};
+
+export default function Home() {
+  const [formData, setFormData] = useState(initialData);
   const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
 
@@ -69,6 +91,8 @@ export default function Home() {
       bio: '',
       github: '',
       linkedin: '',
+      instagram: '',
+      x: '',
       projects: [{ title: '', description: '' }],
       skills: [],
       skillInput: ''
@@ -95,22 +119,25 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      {/* Top Navigation Bar */}
+      {/* Top Nav */}
       <header className="fixed top-0 left-0 w-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-md z-50 shadow-md">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-          <div className="text-xl font-bold text-indigo-700 dark:text-indigo-300">🧭 Haque & Sons</div>
+          <div className="text-xl font-bold text-indigo-700 dark:text-indigo-300">🧭 Portfolio Builder</div>
           <nav className="flex gap-6 text-sm font-medium">
-            <a href="#" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 transition">Home</a>
-            <a href="#services" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 transition">Services</a>
-            <a href="#" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 transition">Create</a>
-            <a href="https://haque-and-sons.vercel.app/blog.html" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 transition">Blog</a>
-            <a href="https://nejamulportfolio.vercel.app/" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 transition">Portfolio</a>
-            <a href="https://resume-builder-alpha-puce.vercel.app/" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 transition">Resume Builder</a>
+          <button
+  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+  className="hover:text-indigo-600 transition"
+>
+  Home
+</button>
+            <a href="https://haque-and-sons.vercel.app/services.html" className="hover:text-indigo-600 transition">Services</a>
+            <a href="https://haque-and-sons.vercel.app/blog.html" className="hover:text-indigo-600 transition">Blog</a>
+            <a href="https://resume-builder-alpha-puce.vercel.app/" className="hover:text-indigo-600 transition">AI Resume Builder</a>
+            <a href="https://nejamulportfolio.vercel.app/" className="hover:text-indigo-600 transition">Admin Portfolio</a>
           </nav>
         </div>
       </header>
 
-      {/* Spacer for fixed navbar */}
       <div className="h-[64px]"></div>
 
       <div
@@ -140,7 +167,7 @@ export default function Home() {
           </h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* BASIC FIELDS */}
+            {/* Basic Fields */}
             {['username', 'name', 'bio', 'github', 'linkedin', 'instagram', 'x'].map((field, idx) => (
               <div key={idx}>
                 <label className="block text-base font-semibold capitalize text-gray-800 dark:text-gray-200 mb-1">
@@ -154,7 +181,7 @@ export default function Home() {
                     onChange={handleChange}
                     rows="2"
                     maxLength={500}
-                    className="mt-1 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+                    className="mt-1 w-full px-4 py-2 border rounded-lg"
                   />
                 ) : (
                   <input
@@ -162,28 +189,14 @@ export default function Home() {
                     value={formData[field]}
                     onChange={handleChange}
                     required
-                    placeholder={
-                      field === 'username'
-                        ? 'e.g. nejamul_dev'
-                        : field === 'name'
-                        ? 'e.g. Nejamul Haque'
-                        : field === 'github'
-                        ? 'https://github.com/yourusername'
-                        : field === 'linkedin'
-                        ? 'https://linkedin.com/in/yourprofile'
-                        : field === 'instagram'
-                        ? 'https://instagram.com/yourusername'
-                        : field === 'x'
-                        ? 'https://x.com/yourusername'
-                        : 'Enter text...'
-                    }
-                    className="mt-1 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+                    placeholder={`Enter your ${field}`}
+                    className="mt-1 w-full px-4 py-2 border rounded-lg"
                   />
                 )}
               </div>
             ))}
 
-            {/* SKILLS */}
+            {/* Skills */}
             <div>
               <label className="block text-base font-semibold text-gray-800 dark:text-gray-200 mb-1">Skills</label>
               <form onSubmit={handleSkillAdd} className="flex gap-2 mt-1">
@@ -192,14 +205,14 @@ export default function Home() {
                   placeholder="Add skill and press Enter"
                   value={formData.skillInput}
                   onChange={e => setFormData({ ...formData, skillInput: e.target.value })}
-                  className="flex-1 px-4 py-2 border rounded focus:ring-2 focus:ring-indigo-400"
+                  className="flex-1 px-4 py-2 border rounded"
                 />
               </form>
               <div className="mt-2 flex flex-wrap gap-2">
                 {formData.skills.map((skill, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium shadow-sm transition hover:scale-105"
+                    className="inline-flex items-center bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium"
                   >
                     {skill}
                     <button
@@ -214,7 +227,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* PROJECTS */}
+            {/* Projects */}
             <div>
               <label className="block text-base font-semibold text-gray-800 dark:text-gray-200 mb-1">Projects</label>
               {formData.projects.map((proj, index) => (
@@ -252,9 +265,8 @@ export default function Home() {
             </div>
           </form>
         </div>
-
-        {/* Floating Live Preview */}
-        <div className="fixed right-4 bottom-4 w-[320px] sm:w-[400px] bg-white dark:bg-gray-800 border border-indigo-300 dark:border-indigo-600 rounded-xl shadow-lg p-4 z-50">
+{/* Floating Live Preview */}
+<div className="fixed right-4 bottom-4 w-[320px] sm:w-[400px] bg-white dark:bg-gray-800 border border-indigo-300 dark:border-indigo-600 rounded-xl shadow-lg p-4 z-50">
           <h2 className="text-lg font-semibold text-indigo-700 dark:text-indigo-300 mb-2">🔍 Live Preview</h2>
           <div className="text-sm space-y-2">
             {formData.photo && <img src={formData.photo} alt="profile" className="w-20 h-20 rounded-full mx-auto mb-2 shadow-md" />}
@@ -263,7 +275,23 @@ export default function Home() {
             <p><strong>Bio:</strong> {formData.bio || 'Not set'}</p>
             <p><strong>GitHub:</strong> {formData.github || 'Not set'}</p>
             <p><strong>LinkedIn:</strong> {formData.linkedin || 'Not set'}</p>
-            <p><strong>Skills:</strong> {formData.skills.join(', ') || 'Not set'}</p>
+            <p><strong>Instagram:</strong> {formData.instagram || 'Not set'}</p>
+            <p><strong>X:</strong> {formData.x || 'Not set'}</p>
+            <p><strong>Skills:</strong></p>
+            <div className="flex flex-wrap gap-2 mt-1">
+  {formData.skills.length > 0 ? (
+    formData.skills.map((skill, i) => (
+      <span
+        key={i}
+        className="bg-indigo-200 text-indigo-800 px-3 py-1 rounded-full text-xs font-semibold shadow-sm"
+      >
+        {skill}
+      </span>
+    ))
+  ) : (
+    <span className="text-gray-500">Not set</span>
+  )}
+            </div>
             <p><strong>Projects:</strong></p>
             <ul className="list-disc ml-4">
               {formData.projects.map((p, i) => (
@@ -273,8 +301,7 @@ export default function Home() {
           </div>
         </div>
         <ToastContainer />
-        {/* Footer */}
-      <footer className="mt-10 w-full text-center py-6 text-sm text-gray-700 dark:text-gray-700 z-10">
+        <footer className="mt-10 w-full text-center py-6 text-sm text-gray-700 dark:text-gray-700 z-10">
         <hr className="mb-4 border-gray-300 dark:border-gray-300" />
         <p>
           Powered by <a href="https://haque-and-sons.vercel.app" target="_blank" rel="noreferrer" className="text-indigo-900 hover:underline">Haque & Sons</a>

@@ -3,8 +3,31 @@ import { useNavigate } from 'react-router-dom';
 import html2pdf from 'html2pdf.js';
 
 export default function PortfolioPreview() {
-  const data = JSON.parse(localStorage.getItem('portfolioData') || '{}');
   const navigate = useNavigate();
+
+  const rawData = JSON.parse(localStorage.getItem('portfolioData') || '{}');
+
+  const data = {
+    ...rawData,
+    projects: Array.isArray(rawData.projects)
+      ? rawData.projects
+      : (() => {
+          try {
+            return JSON.parse(rawData.projects || '[]');
+          } catch {
+            return [];
+          }
+        })(),
+    skills: Array.isArray(rawData.skills)
+      ? rawData.skills
+      : (() => {
+          try {
+            return JSON.parse(rawData.skills || '[]');
+          } catch {
+            return [];
+          }
+        })()
+  };
 
   const handleDownloadPDF = () => {
     const element = document.getElementById('portfolio-preview');
@@ -24,7 +47,7 @@ export default function PortfolioPreview() {
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex flex-col items-center justify-start py-8 px-4 sm:px-6 relative">
       {/* Background */}
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fHdlYnNpdGV8ZW58MHx8MHx8fDA%3D')] opacity-20 z-0"></div>
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=900&auto=format&fit=crop&q=60')] opacity-20 z-0"></div>
 
       {/* Card */}
       <div id="portfolio-preview" className="relative z-10 w-full max-w-2xl bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl p-6 sm:p-10 transition-all duration-500">
@@ -69,28 +92,29 @@ export default function PortfolioPreview() {
           {/* Projects */}
           <p><strong className="text-indigo-700">📂 Projects:</strong></p>
           <ul className="ml-5 list-disc space-y-1">
-            {Array.isArray(data.projects)
-              ? data.projects.map((proj, idx) => (
-                  <li key={idx}>
-                    <strong className="text-indigo-600">{proj.title}:</strong> {proj.description}
-                  </li>
-                ))
-              : <li>{data.projects}</li>}
+            {data.projects.length > 0 ? (
+              data.projects.map((proj, idx) => (
+                <li key={idx}>
+                  <strong className="text-indigo-600">{proj.title}:</strong> {proj.description}
+                </li>
+              ))
+            ) : (
+              <li><em>No projects added</em></li>
+            )}
           </ul>
 
-          {/* Skills */}
+          {/* ✅ Fixed Skills Section */}
           <p><strong className="text-indigo-700">🛠 Skills:</strong></p>
           <div className="flex flex-wrap gap-2">
-            {Array.isArray(data.skills)
-              ? data.skills.map((skill, i) => (
-                  <span
-                    key={i}
-                    className="bg-indigo-200 text-indigo-800 px-3 py-1 rounded-full text-sm font-semibold shadow-sm transition hover:scale-105"
-                  >
-                    {skill}
-                  </span>
-                ))
-              : <span>{data.skills}</span>}
+            {data.skills.length > 0 ? (
+              data.skills.map((skill, i) => (
+                <span key={i} className="bg-indigo-200 text-indigo-800 px-3 py-1 rounded-full text-sm font-semibold">
+                  {skill}
+                </span>
+              ))
+            ) : (
+              <span><em>No skills added</em></span>
+            )}
           </div>
         </div>
       </div>
