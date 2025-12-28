@@ -102,5 +102,5 @@ Thanks to the open-source tools and libraries used in this project.
 ## 📬 Contact
 
 📧 Email: nejamulhaque05@gmail.com
-🔗 Portfolio: https://portfolio-builder-ayb0.onrender.com
+🔗 Portfolio: https://portfolio-ai-theta.vercel.app/
 🐙 GitHub: github.com/NejamulHaque    
