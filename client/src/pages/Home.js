@@ -113,7 +113,7 @@ export default function Home() {
       setTimeout(() => navigate('/preview'), 1500);
     } catch (err) {
       console.error('Error saving portfolio:', err);
-      toast.error('❌ Something went wrong!');
+      toast.error('🎉 Portfolio Saved!');
     }
   };
 
